@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie List</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        h3{
+        color:palevioletred;
+        }
+        #app {
+            width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #searchBtn {
+            width: 20%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #results {
+            width: 100%;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .movie-item {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .movie-poster {
+            width: 30%;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .movie-details {
+            width: 70%;
+        }
+
+        .error {
+            color: red;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #l1{
+            color:Orange;
+        }
+        #l2
+        {
+            color:limegreen;
+        }
+        #l3{
+            color:blueviolet;
+        }
+        #l4{
+            color:mediumvioletred;
+        }
+        #l5{
+            color:aqua;
+        }
+        #l{
+           color:Red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" id="searchInput" placeholder="Search for a movie...">
+        <button id="searchBtn">Search</button>
+        <div id="results">
+        </div>
+    </div>
+
+</body>
+<script>
+    const searchBtn = document.querySelector("#searchBtn");
+    const searchInput = document.querySelector("#searchInput");
+    const resultsDiv = document.querySelector("#results");
+
+    searchBtn.addEventListener("click", function () {
+        const movieTitle = searchInput.value;
+        searchMovie(movieTitle);
+    });
+
+    function searchMovie(movieTitle) {
+        const omdbApiKey = "99728f45";
+        const omdbApiUrl = `http://www.omdbapi.com/?apikey=${omdbApiKey}&t=${movieTitle}`;
+
+        fetch(omdbApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.Response === "False") {
+                    resultsDiv.innerHTML = `<div class="error">Movie not found.</div>`;
+                    return;
+                }
+                const movie = {
+                    title: data.Title,
+                    year: data.Year,
+                    imdbRating: data.imdbRating,
+                    cast: data.Actors,
+                    poster: data.Poster,
+                    writer: data.Writer,
+                    director : data.Director
+                };
+                displayMovie(movie);
+            });
+    }
+
+    function displayMovie(movie) {
+  const movieItem = `
+    <div class="movie-item">
+      <img class="movie-poster" src="${movie.poster}" alt="${movie.title} poster">
+      <div class="movie-details">
+        <h3><span> Title: </span> ${movie.title} </h3> 
+        <ul>
+            <li id="l1">Movie Year: <i><b>${movie.year}</i></b></li>
+            <li id="l2">IMDB Rating: <i><b> ${movie.imdbRating}</i></b></li>
+            <li id="l">Cast & Crew</li>
+            <ul>
+            <li id="l3">Actors: <i><b>${movie.cast}<i><b></li>
+            <li id="l4">Director: <i><b>${movie.director}</i></b></li>
+            <li id="l5">Writer: <i><b>${movie.writer}</i></b></li>
+            </ul>
+        </ul>
+      </div>
+    </div>
+  `;
+  resultsDiv.innerHTML = movieItem;
+}
+</script>
+
+
+</html>
